@@ -19,47 +19,14 @@ var (
 const unavailable = "sponsorship unavailable"
 
 func IsAuthorized() bool {
-	return len(Subject) > 0
+	return true
 }
 
 func IsAuthorizedForApi() bool {
-	return IsAuthorized() && Subject != unavailable
+	return true
 }
 
 // check and set sponsorship token
 func ConfigureSponsorship(token string) error {
-	if token == "" {
-		var err error
-		if token, err = readSerial(); token == "" || err != nil {
-			return err
-		}
-	}
-
-	conn, err := cloud.Connection()
-	if err != nil {
-		return err
-	}
-
-	client := pb.NewAuthClient(conn)
-
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	res, err := client.IsAuthorized(ctx, &pb.AuthRequest{Token: token})
-	if err == nil && res.Authorized {
-		Subject = res.Subject
-		ExpiresAt = res.ExpiresAt.AsTime()
-		Token = token
-	}
-
-	if err != nil {
-		if s, ok := status.FromError(err); ok && s.Code() != codes.Unknown {
-			Subject = unavailable
-			err = nil
-		} else {
-			err = fmt.Errorf("sponsortoken: %w", err)
-		}
-	}
-
-	return err
+	return nil
 }
